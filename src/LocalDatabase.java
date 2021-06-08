@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class LocalDatabase {
 
@@ -154,12 +155,110 @@ public class LocalDatabase {
         connection.close();
     }
 
+    public void inputCatchData(LocalDateTime dateTime, double weight, double latitude, double longitude) throws SQLException {
+        int record_id = generateRecord(dateTime, weight);
+        Connection connection = DriverManager.getConnection(connectionString);
+        String sql = "INSERT INTO catches (record_id, latitude, longitude) VALUES (?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, record_id);
+        statement.setDouble(2, latitude);
+        statement.setDouble(3, longitude);
+        statement.executeUpdate();
+        connection.close();
+    }
+
+    public ArrayList<Record> getAllRecords() throws SQLException {
+        ArrayList<Record> records = new ArrayList<>();
+
+        Connection connection = DriverManager.getConnection(connectionString);
+        String sql = "SELECT records.record_id, datetime, weight, latitude, longitude FROM records INNER JOIN catches ON records.record_id = catches.record_id WHERE user_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, currentUser.getUser_id());
+        statement.execute();
+        ResultSet results = statement.getResultSet();
+
+        while (results.next()) {
+            records.add(new CatchRecord(
+                results.getInt(1),
+                LocalDateTime.parse(results.getString(2)),
+                results.getDouble(3),
+                results.getDouble(4),
+                results.getDouble(5)
+            ));
+        }
+
+        sql = "SELECT records.record_id, datetime, weight, revenue FROM records INNER JOIN sells ON records.record_id = sells.record_id WHERE user_id = ?;";
+        statement = connection.prepareStatement(sql);
+        statement.setInt(1, currentUser.getUser_id());
+        statement.execute();
+        results = statement.getResultSet();
+
+        while (results.next()) {
+            records.add(new SellRecord(
+                    results.getInt(1),
+                    LocalDateTime.parse(results.getString(2)),
+                    results.getDouble(3),
+                    results.getDouble(4)
+            ));
+        }
+
+        connection.close();
+        return records;
+    }
+
+    public Record getRecordById(int record_id) throws SQLException {
+        Record toReturn = null;
+        Connection connection = DriverManager.getConnection(connectionString);
+        String sql = "SELECT records.record_id, datetime, weight, latitude, longitude FROM records INNER JOIN catches ON records.record_id = catches.record_id WHERE user_id = ? AND records.record_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, currentUser.getUser_id());
+        statement.setInt(2, record_id);
+        statement.execute();
+        ResultSet results = statement.getResultSet();
+
+        if (results.next()) {
+            toReturn = new CatchRecord(
+                    results.getInt(1),
+                    LocalDateTime.parse(results.getString(2)),
+                    results.getDouble(3),
+                    results.getDouble(4),
+                    results.getDouble(5)
+            );
+        } else {
+            sql = "SELECT records.record_id, datetime, weight, revenue FROM records INNER JOIN sells ON records.record_id = sells.record_id WHERE user_id = ? AND records.record_id = ?;";
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, currentUser.getUser_id());
+            statement.setInt(2, record_id);
+            statement.execute();
+            results = statement.getResultSet();
+            if (results.next()) {
+                toReturn = new SellRecord(
+                        results.getInt(1),
+                        LocalDateTime.parse(results.getString(2)),
+                        results.getDouble(3),
+                        results.getDouble(4)
+                );
+            }
+        }
+
+        connection.close();
+        return toReturn;
+    }
+
     public static void main(String[] args) {
         try {
             LocalDatabase db = new LocalDatabase();
 //            db.addUser("eden", "gae19jtu@uea.ac.uk", "password");
             System.out.println(db.changeUser("eden", "password"));
-            db.inputSellData(LocalDateTime.now(), 420.69, 92.42);
+//            db.inputSellData(LocalDateTime.now(), 420.69, 92.42);
+//            db.inputCatchData(LocalDateTime.now(), 423.2, 52.639337, 1.246151);
+//            for (Record r : db.getAllRecords()) {
+//                System.out.println(r);
+//            }
+            CatchRecord record = (CatchRecord)db.getRecordById(3);
+            System.out.println(record);
+            record.editLocation(5.21312, 63.51234);
+            System.out.println(record);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -258,9 +357,17 @@ public class LocalDatabase {
         public double latitude;
         public double longitude;
 
+        public CatchRecord(int record_id, LocalDateTime dateTime, double weight, double latitude, double longitude) {
+            this.record_id = record_id;
+            this.date = dateTime;
+            this.weight = weight;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
         public void editLocation(double latitude, double longitude) throws SQLException {
             Connection connection = DriverManager.getConnection(connectionString);
-            String sql = "UPDATE catches SET latitude = ? AND longitude = ? WHERE record_id = ?";
+            String sql = "UPDATE catches SET latitude = ?, longitude = ? WHERE record_id = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setDouble(1, latitude);
             statement.setDouble(2, longitude);
@@ -269,10 +376,25 @@ public class LocalDatabase {
             this.latitude = latitude;
             this.longitude = longitude;
         }
+
+        public String toString() {
+            return String.format("%fkg catch at %f %f @ %s", weight, latitude, longitude, date.toString());
+        }
     }
 
     public class SellRecord extends Record {
-        public double price;
+        public double revenue;
+
+        public SellRecord(int record_id, LocalDateTime date, double weight, double revenue) {
+            this.record_id = record_id;
+            this.date = date;
+            this.weight = weight;
+            this.revenue = revenue;
+        }
+
+        public String toString() {
+            return String.format("Sold %f for $%f @ %s", weight, revenue, date.toString());
+        }
     }
 
     public static class UserNotFoundException extends Exception {
