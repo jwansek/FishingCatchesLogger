@@ -415,6 +415,15 @@ public class LocalDatabase {
         return records;
     }
 
+    /**
+     * Method: getRecordsByWeight(double weight)
+     *
+     * Description: Returns records (catch records or sell records) with a given weight associated with the current user.
+     * Throws an SQLException if there's an SQL-related error.
+     *
+     * Author: Edward Attenborough
+     * Date: 09/06/2021
+     */
     public ArrayList<Record> getRecordsByWeight(double weight) throws SQLException {
         ArrayList<Record> records = new ArrayList<>();
 
@@ -455,6 +464,73 @@ public class LocalDatabase {
         return records;
     }
 
+    /**
+     * Method: getRecordsByRevenue(double revenue)
+     *
+     * Description: Returns sell records associated with the current user that have a given revenue.
+     * Throws an SQLException if there's an SQL-related error.
+     *
+     * Author: Edward Attenborough
+     * Date: 10/06/2021
+     */
+    public ArrayList<SellRecord> getRecordsByRevenue(double revenue) throws SQLException {
+        ArrayList<SellRecord> records = new ArrayList<>();
+
+        Connection connection = DriverManager.getConnection(connectionString);
+        String sql = "SELECT records.record_id, datetime, weight, revenue FROM records INNER JOIN sells ON records.record_id = sells.record_id WHERE user_id = ? AND revenue  = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, currentUser.getUser_id());
+        statement.setDouble(2, revenue);
+        statement.execute();
+        ResultSet results = statement.getResultSet();
+
+        if (results.next()) {
+            records.add(new SellRecord(
+                    results.getInt(1),
+                    LocalDateTime.parse(results.getString(2)),
+                    results.getDouble(3),
+                    results.getDouble(4)
+            ));
+        }
+        connection.close();
+        return records;
+    }
+
+    /**
+     * Method: getRecordsByRevenue(double revenue)
+     *
+     * Description: Returns catch records associated with the current user that have a given location. Takes latitude
+     * and longitude as arguments.
+     * Throws an SQLException if there's an SQL-related error.
+     *
+     * Author: Edward Attenborough
+     * Date: 10/06/2021
+     */
+    public ArrayList<CatchRecord> getRecordsByLocation(double latitude, double longitude) throws SQLException {
+        ArrayList<CatchRecord> records = new ArrayList<>();
+
+        Connection connection = DriverManager.getConnection(connectionString);
+        String sql = "SELECT records.record_id, datetime, weight, latitude, longitude FROM records INNER JOIN catches ON records.record_id = catches.record_id WHERE user_id = ? AND latitude = ? AND longitude = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, currentUser.getUser_id());
+        statement.setDouble(2, latitude);
+        statement.setDouble(3, longitude);
+        statement.execute();
+        ResultSet results = statement.getResultSet();
+
+        while (results.next()) {
+            records.add(new CatchRecord(
+                    results.getInt(1),
+                    LocalDateTime.parse(results.getString(2)),
+                    results.getDouble(3),
+                    results.getDouble(4),
+                    results.getDouble(5)
+            ));
+        }
+        connection.close();
+        return records;
+    }
+
     public static void main(String[] args) {
         try {
             LocalDatabase db = new LocalDatabase();
@@ -476,7 +552,13 @@ public class LocalDatabase {
 //            for (Record r : db.getRecordsByDate(LocalDateTime.parse("2021-06-08T13:55:36.287800200"))) {
 //                System.out.println(r);
 //            }
-            for (Record r : db.getRecordsByWeight(43.2)) {
+//            for (Record r : db.getRecordsByWeight(43.2)) {
+//                System.out.println(r);
+//            }
+//            for (SellRecord r : db.getRecordsByRevenue(52.3)) {
+//                System.out.println(r);
+//            }
+            for (CatchRecord r : db.getRecordsByLocation(5.21312, 63.51234)) {
                 System.out.println(r);
             }
         } catch (Exception e) {
