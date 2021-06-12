@@ -44,15 +44,20 @@
    <children>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
          <children>
-            <TextField layoutX="149.0" layoutY="165.0" prefHeight="25.0" prefWidth="303.0" promptText="Username/email" />
-            <Button layoutX="278.0" layoutY="242.0" mnemonicParsing="false" onAction="#Login" text="Login" />
-            <PasswordField layoutX="149.0" layoutY="200.0" prefHeight="25.0" prefWidth="303.0" promptText="Password" />
+            <TextField fx:id="username" layoutX="149.0" layoutY="165.0" prefHeight="25.0" prefWidth="303.0" promptText="Username/email" />
+            <Button layoutX="279.0" layoutY="265.0" mnemonicParsing="false" onAction="#Login" text="Login" />
+            <PasswordField fx:id="password" layoutX="149.0" layoutY="200.0" prefHeight="25.0" prefWidth="303.0" promptText="Password" />
             <Label layoutX="213.0" layoutY="82.0" text="Fish data system">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Button layoutX="258.0" layoutY="285.0" mnemonicParsing="false" onAction="#GoToSignUp" text="Go to signup" />
+            <Button layoutX="259.0" layoutY="308.0" mnemonicParsing="false" onAction="#GoToSignUp" text="Go to signup" />
+            <Label fx:id="errorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="149.0" layoutY="237.0" prefHeight="20.0" prefWidth="303.0" textAlignment="JUSTIFY" textFill="RED">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>
