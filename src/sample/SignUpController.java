@@ -48,7 +48,7 @@ public class SignUpController {
         LocalDatabase db = new LocalDatabase();
 
         try{
-            if (db.searchForUser(usernameText, passwordText) != null){
+            if (db.searchForUser(usernameText) != null){
                 errorMessage.setText("An user with that username already exists");
             }
 

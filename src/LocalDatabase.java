@@ -122,15 +122,20 @@ public class LocalDatabase {
      * Date: 07/06/2021
      */
     public FishingUser changeUser(String username, String plainPassword) throws SQLException, UserNotFoundException, IncorrectPasswordException {
-        FishingUser user = searchForUser(username, plainPassword);
-        currentUser = user;
-        return user;
+        FishingUser user = searchForUser(username);
+
+        if (user.getPasswordHash().equals(FishingUser.hashPassword(plainPassword))) {
+            currentUser = user;
+            return user;
+        } else {
+            throw new IncorrectPasswordException("The incorrect password was provided for the specified user");
+        }
     }
 
     /**
-     * Method: changeUser(String username, String plainPassword)
+     * Method: changeUser(String username)
      *
-     * Description: Returns a user. Takes a username and plaintext
+     * Description: Returns a user. Takes a username only.
      * password.
      * Throws a generic SQLException if there's an error. Throws a UserNotFoundException exception if
      * the given username was not found. Throws a IncorrectPasswordException if the provided password hash
@@ -139,7 +144,7 @@ public class LocalDatabase {
      * Author: Edward Attenborough
      * Date: 08/06/2021
      */
-    public FishingUser searchForUser(String username, String plainPassword) throws  SQLException, UserNotFoundException, IncorrectPasswordException {
+    public FishingUser searchForUser(String username) throws  SQLException, UserNotFoundException {
         Connection connection = DriverManager.getConnection(connectionString);
         String sql = "SELECT * FROM users WHERE username = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -160,13 +165,8 @@ public class LocalDatabase {
             throw new UserNotFoundException("A user with the specified username was not found in the database.");
         }
 
-        if (user.getPasswordHash().equals(FishingUser.hashPassword(plainPassword))) {
-            connection.close();
-            return user;
-        } else {
-            connection.close();
-            throw new IncorrectPasswordException("The incorrect password was provided for the specified user");
-        }
+        connection.close();
+        return user;
     }
 
     private int generateRecord(LocalDateTime dateTime, double weight) throws SQLException {

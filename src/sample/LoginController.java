@@ -31,7 +31,6 @@ public class LoginController {
         LocalDatabase db = new LocalDatabase();
 
         try{
-            db.searchForUser(usernameText, passwordText);
             db.changeUser(usernameText, passwordText);
             WindowSwitcher.goToPage(e, "HomeView", 600, 400);
 
