@@ -133,7 +133,7 @@ public class LocalDatabase {
     }
 
     /**
-     * Method: changeUser(String username)
+     * Method: searchForUser(String username)
      *
      * Description: Returns a user. Takes a username only.
      * password.

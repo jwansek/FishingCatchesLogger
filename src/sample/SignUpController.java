@@ -18,7 +18,7 @@ public class SignUpController {
         WindowSwitcher.goToPage(e, "LoginView", 600, 400);
     }
 
-    public void SignUp(ActionEvent e) throws SQLException, LocalDatabase.IncorrectPasswordException {
+    public void SignUp(ActionEvent e) throws SQLException, LocalDatabase.UserNotFoundException, LocalDatabase.IncorrectPasswordException {
         String usernameText = username.getText().trim();
         String emailText = email.getText().trim();
         String passwordText = password.getText().trim();
@@ -37,7 +37,7 @@ public class SignUpController {
             return;
         }
         else if(confirmPasswordText.isEmpty()) {
-            errorMessage.setText("Please enter a password.");
+            errorMessage.setText("Please confirm the password.");
             return;
         }
         else if(!confirmPasswordText.equals(passwordText)) {
@@ -49,11 +49,12 @@ public class SignUpController {
 
         try{
             if (db.searchForUser(usernameText) != null){
-                errorMessage.setText("An user with that username already exists");
+                errorMessage.setText("A user with that username already exists");
             }
 
         } catch (LocalDatabase.UserNotFoundException exception) {
             db.addUser(usernameText, emailText, passwordText);
+            db.changeUser(usernameText, passwordText);
             WindowSwitcher.goToPage(e, "HomeView", 600, 400);
         }
     }

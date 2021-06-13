@@ -9,13 +9,13 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SignUpController">
    <children>
-      <TextField fx:id="username" layoutX="226.0" layoutY="84.0" promptText="Username" />
-      <TextField fx:id="email" layoutX="226.0" layoutY="136.0" promptText="Email (optional)" />
-      <PasswordField fx:id="password" layoutX="226.0" layoutY="188.0" promptText="Password" />
-      <PasswordField fx:id="confirmPassword" layoutX="226.0" layoutY="233.0" promptText="Confirm Password" />
-      <Button layoutX="272.0" layoutY="303.0" mnemonicParsing="false" onAction="#SignUp" text="Sign up" />
-      <Button layoutX="243.0" layoutY="343.0" mnemonicParsing="false" onAction="#GoToLogin" text="Back to login page" />
-      <Label fx:id="errorMessage" alignment="CENTER" layoutX="227.0" layoutY="273.0" prefHeight="20.0" prefWidth="149.0" textFill="RED">
+      <TextField fx:id="username" layoutX="195.0" layoutY="68.0" prefHeight="25.0" prefWidth="210.0" promptText="Username" />
+      <TextField fx:id="email" layoutX="195.0" layoutY="115.0" prefHeight="25.0" prefWidth="210.0" promptText="Email (optional)" />
+      <PasswordField fx:id="password" layoutX="195.0" layoutY="164.0" prefHeight="25.0" prefWidth="210.0" promptText="Password" />
+      <PasswordField fx:id="confirmPassword" layoutX="196.0" layoutY="209.0" prefHeight="25.0" prefWidth="210.0" promptText="Confirm Password" />
+      <Button layoutX="272.0" layoutY="281.0" mnemonicParsing="false" onAction="#SignUp" text="Sign up" />
+      <Button layoutX="243.0" layoutY="324.0" mnemonicParsing="false" onAction="#GoToLogin" text="Back to login page" />
+      <Label fx:id="errorMessage" alignment="CENTER" layoutX="150.0" layoutY="247.0" prefHeight="20.0" prefWidth="300.0" textFill="RED">
          <font>
             <Font size="14.0" />
          </font>

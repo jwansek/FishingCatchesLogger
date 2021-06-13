@@ -6,17 +6,15 @@ import java.sql.SQLException;
 
 public class LoginController {
 
-
     @FXML TextField username;
     @FXML TextField password;
     @FXML Label errorMessage;
-
 
     public void GoToSignUp(ActionEvent e){
         WindowSwitcher.goToPage(e, "SignUpView", 600, 400);
     }
 
-    public void Login(ActionEvent e) throws LocalDatabase.IncorrectPasswordException, SQLException {
+    public void Login(ActionEvent e) throws SQLException {
         String usernameText = username.getText().trim();
         String passwordText = password.getText().trim();
 
@@ -32,6 +30,7 @@ public class LoginController {
 
         try{
             db.changeUser(usernameText, passwordText);
+            HomeController.receiveDB(db);
             WindowSwitcher.goToPage(e, "HomeView", 600, 400);
 
         } catch (LocalDatabase.UserNotFoundException | LocalDatabase.IncorrectPasswordException exception) {
