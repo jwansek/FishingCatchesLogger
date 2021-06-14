@@ -1,3 +1,6 @@
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -631,7 +634,7 @@ public class LocalDatabase {
         }
     }
 
-    private abstract class Record {
+    abstract class Record {
         public LocalDateTime date;
         public double weight;
         protected int record_id;
@@ -654,6 +657,10 @@ public class LocalDatabase {
             statement.setInt(2, record_id);
             statement.execute();
             this.weight = newWeight;
+        }
+
+        public double getWeight() {
+            return weight;
         }
     }
 
@@ -685,6 +692,23 @@ public class LocalDatabase {
         public String toString() {
             return String.format("%fkg catch at %f %f @ %s", weight, latitude, longitude, date.toString());
         }
+
+        public SimpleDoubleProperty latitudeProperty(){
+            return new SimpleDoubleProperty(latitude);
+        }
+        public SimpleDoubleProperty longitudeProperty(){
+
+            return new SimpleDoubleProperty(longitude);
+        }
+        public SimpleDoubleProperty weightProperty(){
+
+            return new SimpleDoubleProperty(weight);
+        }
+        public SimpleStringProperty dateTimeProperty(){
+
+            return new SimpleStringProperty(String.valueOf(date));
+        }
+
     }
 
     public class SellRecord extends Record {
