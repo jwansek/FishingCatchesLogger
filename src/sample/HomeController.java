@@ -3,22 +3,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class HomeController  {
 
@@ -26,7 +20,7 @@ public class HomeController  {
 
     @FXML Label stockTotal;
     @FXML Label errorMessage;
-    @FXML ChoiceBox choiceBox;
+    @FXML ComboBox choiceBox;
     @FXML TextField searchField;
 
     @FXML private TableView<LocalDatabase.CatchRecord> tableView;
@@ -50,6 +44,10 @@ public class HomeController  {
         WindowSwitcher.goToPage(e, "InputView", 600, 400);
     }
 
+    public void clear() throws SQLException {
+        searchField.clear();
+        initialize();
+    }
     public void search(){
         try {
             switch (choiceBox.getValue().toString()) {
@@ -57,32 +55,71 @@ public class HomeController  {
                     try {
                         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
                         LocalDateTime dateTime = LocalDateTime.parse(searchField.getText(), formatter);
-
                         ArrayList<LocalDatabase.Record> recordsArrayList = db.getRecordsByDate(dateTime);
                         ObservableList<LocalDatabase.CatchRecord> catchRecords = FXCollections.observableArrayList();
-
                         for(LocalDatabase.Record Record: recordsArrayList) {
                             if (Record instanceof LocalDatabase.CatchRecord) {
                                     catchRecords.add((LocalDatabase.CatchRecord) Record);
                             }
                         }
-
                         tableView.setItems(catchRecords);
                         errorMessage.setText("");
-
                     } catch (DateTimeParseException | SQLException e) {
                         errorMessage.setText("Please enter a valid date time");
                         searchField.clear();
                     }
                     break;
                 case "Weight":
+                    try{
+                        double Weight = Double.parseDouble(searchField.getText());
+                        ArrayList<LocalDatabase.Record> recordsArrayList = db.getRecordsByWeight(Weight);
+                        ObservableList<LocalDatabase.CatchRecord> catchRecords = FXCollections.observableArrayList();
+                        for(LocalDatabase.Record Record: recordsArrayList) {
+                            if (Record instanceof LocalDatabase.CatchRecord) {
+                                catchRecords.add((LocalDatabase.CatchRecord) Record);
+                            }
+                        }
+                        tableView.setItems(catchRecords);
+                        errorMessage.setText("");
+                    } catch (NumberFormatException | SQLException e) {
+                        errorMessage.setText("Please enter a valid numeric weight");
+                        searchField.clear();
+                    }
 
                     break;
                 case "Longitude":
-
+                    try{
+                        double Longitude = Double.parseDouble(searchField.getText());
+                        ArrayList<LocalDatabase.CatchRecord> recordsArrayList = db.getAllCatchRecords();
+                        ObservableList<LocalDatabase.CatchRecord> catchRecords = FXCollections.observableArrayList();
+                        for(LocalDatabase.CatchRecord Record: recordsArrayList) {
+                            if (Record.longitude == Longitude) {
+                                catchRecords.add(Record);
+                            }
+                        }
+                        tableView.setItems(catchRecords);
+                        errorMessage.setText("");
+                    } catch (NumberFormatException | SQLException e) {
+                        errorMessage.setText("Please enter a valid numeric longitude");
+                        searchField.clear();
+                    }
                     break;
                 case "Latitude":
-
+                    try{
+                        double Latitude = Double.parseDouble(searchField.getText());
+                        ArrayList<LocalDatabase.CatchRecord> recordsArrayList = db.getAllCatchRecords();
+                        ObservableList<LocalDatabase.CatchRecord> catchRecords = FXCollections.observableArrayList();
+                        for(LocalDatabase.CatchRecord Record: recordsArrayList) {
+                            if (Record.latitude == Latitude) {
+                                catchRecords.add(Record);
+                            }
+                        }
+                        tableView.setItems(catchRecords);
+                        errorMessage.setText("");
+                    } catch (NumberFormatException | SQLException e) {
+                        errorMessage.setText("Please enter a valid numeric longitude");
+                        searchField.clear();
+                    }
                     break;
             }
         } catch(NullPointerException e) {
@@ -152,7 +189,6 @@ public class HomeController  {
 
     public void initialize() throws SQLException {
         calculateStock();
-        choiceBox.getItems().addAll("DateTime", "Weight", "Longitude", "Latitude");
         dateTimeColumn.setCellValueFactory(new PropertyValueFactory<LocalDatabase.CatchRecord, String>("dateTime"));
         weightColumn.setCellValueFactory(new PropertyValueFactory<LocalDatabase.CatchRecord, Double>("weight"));
         latitudeColumn.setCellValueFactory(new PropertyValueFactory<LocalDatabase.CatchRecord, Double>("latitude"));
@@ -168,7 +204,6 @@ public class HomeController  {
         }
 
         tableView.setItems(catchRecords);
-        tableView.setEditable(true);
         dateTimeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         try{
             weightColumn.setCellFactory(TextFieldTableCell.forTableColumn(converter));
@@ -177,10 +212,7 @@ public class HomeController  {
         } catch (Exception e) {
             System.out.print(e);
         }
-
-
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
     }
 
 }
