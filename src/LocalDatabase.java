@@ -753,4 +753,50 @@ public class LocalDatabase {
             super(message);
         }
     }
+    
+        public void exportCatches(String filePath) throws SQLException, IOException{
+            Connection connection = DriverManager.getConnection(connectionString);
+            String sql = "SELECT * FROM records";
+
+            Statement statement = connection.createStatement();
+
+            ResultSet result = statement.executeQuery(sql);
+
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath));
+
+            fileWriter.write("record_id, user_id, weight, datetime");
+
+            while (result.next()) {
+                int recordID = result.getInt("record_id");
+                int userID = result.getInt("user_id");
+                double weight = result.getDouble("weight");
+                String datetime = result.getString("datetime");
+
+                String line = String.format("%i, %i, %d, %s", recordID, userID, weight, datetime);
+
+                fileWriter.newLine();
+                fileWriter.write(line);
+            }
+            statement.close();
+
+            String sql1 = "SELECT * FROM sales";
+
+            Statement statement1 = connection.createStatement();
+
+            ResultSet result1 = statement1.executeQuery(sql1);
+
+            fileWriter.write("sale_id, record_id, revenue");
+
+            while (result1.next()) {
+                int saleID = result1.getInt("sale_id");
+                int recordID = result1.getInt("record_id");
+                double revenue = result.getDouble("revenue");
+
+                String line = String.format("%i, %i, %d");
+                fileWriter.newLine();
+                fileWriter.write(line);
+            }
+            statement.close();
+            fileWriter.close();
+    }
 }
