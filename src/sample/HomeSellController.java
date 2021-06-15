@@ -161,6 +161,7 @@ public class HomeSellController  {
         try{
             LocalDatabase.SellRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
             recordSelected.editRevenue(Double.parseDouble(edditedCell.getNewValue().toString()));
+            calculateStock();
             errorMessage.setText("");
         }
         catch(NumberFormatException e){
@@ -174,8 +175,10 @@ public class HomeSellController  {
         selectedRows = tableView.getSelectionModel().getSelectedItems();
 
         for (LocalDatabase.SellRecord sellRecord: selectedRows){
-            //database delete method needs to go here
+            db.deleteData(sellRecord.record_id);
         }
+
+        initialize();
     }
 
     public void initialize() throws SQLException {

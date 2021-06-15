@@ -188,8 +188,10 @@ public class HomeController  {
         selectedRows = tableView.getSelectionModel().getSelectedItems();
 
         for (LocalDatabase.CatchRecord catchRecord: selectedRows){
-         //database delete method needs to go here
+         db.deleteData(catchRecord.record_id);
         }
+
+        initialize();
     }
 
     public void initialize() throws SQLException {

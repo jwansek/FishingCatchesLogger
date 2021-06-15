@@ -38,7 +38,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Button layoutX="275.0" layoutY="361.0" mnemonicParsing="false" text="Delete" />
+      <Button layoutX="275.0" layoutY="361.0" mnemonicParsing="false" onAction="#deleteButtonPushed" text="Delete" />
       <Label fx:id="errorMessage" alignment="CENTER" layoutX="87.0" layoutY="343.0" prefHeight="17.0" prefWidth="428.0" textFill="RED">
          <font>
             <Font size="11.0" />
