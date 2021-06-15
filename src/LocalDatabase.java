@@ -662,6 +662,15 @@ public class LocalDatabase {
         public double getWeight() {
             return weight;
         }
+
+        public SimpleDoubleProperty weightProperty(){
+
+            return new SimpleDoubleProperty(weight);
+        }
+        public SimpleStringProperty dateTimeProperty(){
+
+            return new SimpleStringProperty(String.valueOf(date));
+        }
     }
 
     public class CatchRecord extends Record {
@@ -700,14 +709,6 @@ public class LocalDatabase {
 
             return new SimpleDoubleProperty(longitude);
         }
-        public SimpleDoubleProperty weightProperty(){
-
-            return new SimpleDoubleProperty(weight);
-        }
-        public SimpleStringProperty dateTimeProperty(){
-
-            return new SimpleStringProperty(String.valueOf(date));
-        }
 
     }
 
@@ -730,6 +731,10 @@ public class LocalDatabase {
             statement.execute();
             connection.close();
             this.revenue = newRevenue;
+        }
+        public SimpleDoubleProperty priceProperty(){
+
+            return new SimpleDoubleProperty(revenue);
         }
 
         public String toString() {
