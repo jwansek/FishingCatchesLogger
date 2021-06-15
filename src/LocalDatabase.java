@@ -814,4 +814,32 @@ public class LocalDatabase {
             statement.close();
             fileWriter.close();
     }
+    
+        public void importCatches(String filePath) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                inputCatchData(LocalDateTime.parse(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3]));
+            }
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
+        br.close();
+    }
+
+    public void importSales(String filePath) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                inputSellData(LocalDateTime.parse(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2]));
+            }
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
+        br.close();
+    }
 }
