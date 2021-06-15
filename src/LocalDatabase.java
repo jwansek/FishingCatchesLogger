@@ -754,6 +754,19 @@ public class LocalDatabase {
         }
     }
     
+        public void deleteData(int record_id) throws SQLException {
+        Connection connection = DriverManager.getConnection(connectionString);
+        String sql = "DELETE FROM records WHERE record_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, record_id);
+        statement.execute();
+        String sql1 = "DELETE FROM catches WHERE record_id = ?";
+        PreparedStatement statement1 = connection.prepareStatement(sql1);
+        statement.setInt(1, record_id);
+        statement1.execute();
+        connection.close();
+    }
+    
         public void exportCatches(String filePath) throws SQLException, IOException{
             Connection connection = DriverManager.getConnection(connectionString);
             String sql = "SELECT * FROM records";
