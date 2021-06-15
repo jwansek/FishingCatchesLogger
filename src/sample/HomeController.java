@@ -3,10 +3,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DoubleStringConverter;
 
+import javax.swing.*;
+import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +46,11 @@ public class HomeController  {
     public void switchDataTables(ActionEvent e){
         HomeSellController.receiveDB(db);
         WindowSwitcher.goToPage(e, "HomeSellView", 600, 400);
+    }
+
+    public void goToImportExport(ActionEvent e){
+        ImportExportController.receiveDB(db);
+        WindowSwitcher.goToPage(e, "ImportExportView", 600, 400);
     }
 
     public void goToInput(ActionEvent e){

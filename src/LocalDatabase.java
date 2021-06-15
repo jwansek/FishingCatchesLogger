@@ -1,9 +1,7 @@
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -769,73 +767,50 @@ public class LocalDatabase {
         connection.close();
     }
     
-        public void exportCatches(String filePath) throws SQLException, IOException{
-            Connection connection = DriverManager.getConnection(connectionString);
-            String sql = "SELECT * FROM records";
+        public void exportData(String filePath) throws IOException, SQLException {
 
-            Statement statement = connection.createStatement();
+         ArrayList<CatchRecord> catchRecords = getAllCatchRecords();
+         ArrayList<SellRecord> sellRecords = getAllSellRecords();
 
-            ResultSet result = statement.executeQuery(sql);
+         File newFile = new File(filePath + "/exportData.txt");
+         BufferedWriter fileWriter = new BufferedWriter(new FileWriter(newFile));
 
-            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath));
 
-            fileWriter.write("record_id, user_id, weight, datetime");
+         for (CatchRecord record: catchRecords){
 
-            while (result.next()) {
-                int recordID = result.getInt("record_id");
-                int userID = result.getInt("user_id");
-                double weight = result.getDouble("weight");
-                String datetime = result.getString("datetime");
+                 String datetime = record.date.toString();
+                 double weight = record.getWeight();
+                 double longitude = record.longitude;
+                 double latitude = record.latitude;
+                 String line = String.format("%s, %f, %f, %f" , datetime, weight, longitude, latitude);
+                 fileWriter.write(line);
+                 fileWriter.newLine();
 
-                String line = String.format("%i, %i, %d, %s", recordID, userID, weight, datetime);
 
-                fileWriter.newLine();
+             }
+         for (SellRecord record: sellRecords){
+                String datetime = record.date.toString();
+                double weight = record.getWeight();
+                double price = record.revenue;
+                String line = String.format("%s, %f, %f" , datetime, weight, price);
                 fileWriter.write(line);
-            }
-            statement.close();
-
-            String sql1 = "SELECT * FROM sales";
-
-            Statement statement1 = connection.createStatement();
-
-            ResultSet result1 = statement1.executeQuery(sql1);
-
-            fileWriter.write("sale_id, record_id, revenue");
-
-            while (result1.next()) {
-                int saleID = result1.getInt("sale_id");
-                int recordID = result1.getInt("record_id");
-                double revenue = result.getDouble("revenue");
-
-                String line = String.format("%i, %i, %d");
                 fileWriter.newLine();
-                fileWriter.write(line);
             }
-            statement.close();
-            fileWriter.close();
+         fileWriter.close();
     }
     
-        public void importCatches(String filePath) throws IOException {
+        public void importData(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         try {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                inputCatchData(LocalDateTime.parse(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3]));
-            }
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
-        br.close();
-    }
-
-    public void importSales(String filePath) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(filePath));
-        try {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                inputSellData(LocalDateTime.parse(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2]));
+                if (data.length == 4){
+                    inputCatchData(LocalDateTime.parse(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3]));
+                }
+                else{
+                    inputSellData(LocalDateTime.parse(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2]));
+                }
             }
         } catch (IOException | SQLException e) {
             e.printStackTrace();

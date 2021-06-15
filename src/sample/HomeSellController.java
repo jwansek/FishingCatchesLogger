@@ -45,6 +45,11 @@ public class HomeSellController  {
         WindowSwitcher.goToPage(e, "HomeView", 600, 400);
     }
 
+    public void goToImportExport(ActionEvent e){
+        ImportExportController.receiveDB(db);
+        WindowSwitcher.goToPage(e, "ImportExportView", 600, 400);
+    }
+
     public void goToInput(ActionEvent e){
         InputController.receiveDB(db);
         WindowSwitcher.goToPage(e, "InputView", 600, 400);
