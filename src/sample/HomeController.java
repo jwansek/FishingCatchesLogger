@@ -3,9 +3,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DoubleStringConverter;
+
+import javax.swing.*;
+import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +22,6 @@ public class HomeController  {
 
     private static LocalDatabase db;
 
-    //load in the fxml elements
     @FXML Label stockTotal;
     @FXML Label errorMessage;
     @FXML ComboBox choiceBox;
@@ -29,43 +33,35 @@ public class HomeController  {
     @FXML private TableColumn<LocalDatabase.CatchRecord, Double> longitudeColumn;
     @FXML private TableColumn<LocalDatabase.CatchRecord, Double> latitudeColumn;
 
-    //creates a new string to double converter
     private static final DoubleStringConverter converter = new DoubleStringConverter();
 
-    //method to receive a database object
     public static void receiveDB(LocalDatabase database){
         db = database;
     }
 
-    //method to go back to the login page
     public void Logout(ActionEvent e){
         WindowSwitcher.goToPage(e, "LoginView", 600, 400);
     }
 
-    //method to switch to the sale data page
     public void switchDataTables(ActionEvent e){
         HomeSellController.receiveDB(db);
         WindowSwitcher.goToPage(e, "HomeSellView", 600, 400);
     }
 
-    //method to go to the import export page
     public void goToImportExport(ActionEvent e){
         ImportExportController.receiveDB(db);
         WindowSwitcher.goToPage(e, "ImportExportView", 600, 400);
     }
 
-    //method to go to the input page
     public void goToInput(ActionEvent e){
         InputController.receiveDB(db);
         WindowSwitcher.goToPage(e, "InputView", 600, 400);
     }
 
-    //method that clears the current search
     public void clear() throws SQLException {
         searchField.clear();
         initialize();
     }
-    //method that allows the user to search by a data category and only show in the table the records that match to that search
     public void search(){
         try {
             switch (choiceBox.getValue().toString()) {
@@ -145,7 +141,7 @@ public class HomeController  {
         }
     }
 
-    //method that calculates the current weight of fish in stock of the user
+
     public void calculateStock() throws SQLException {
         ArrayList<LocalDatabase.CatchRecord> catchRecordArrayList = db.getAllCatchRecords();
         Iterator<LocalDatabase.CatchRecord> i = catchRecordArrayList.iterator();
@@ -161,7 +157,6 @@ public class HomeController  {
         stockTotal.setText((catchTotal-sellTotal) + "kg");
     }
 
-    //method for editing date time of a record
     public void changeDateTimeCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         LocalDatabase.CatchRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
         //check if the new value in eddited cell is in correct local date time format
@@ -175,8 +170,6 @@ public class HomeController  {
             initialize();
         }
     }
-
-    //method for editing weight of a record
     public void changeWeightCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         try{
             LocalDatabase.CatchRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
@@ -188,22 +181,17 @@ public class HomeController  {
           errorMessage.setText("thats not a number");
       }
     }
-
-    //method for editing the longitude of a record
     public void changeLongitudeCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         LocalDatabase.CatchRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
         recordSelected.editLocation(recordSelected.latitude , Double.parseDouble(edditedCell.getNewValue().toString()));
         errorMessage.setText("");
     }
-
-    //method for editing the latitude of a record
     public void changeLatitudeCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         LocalDatabase.CatchRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
         recordSelected.editLocation(Double.parseDouble(edditedCell.getNewValue().toString()) , recordSelected.longitude);
         errorMessage.setText("");
     }
 
-    //method for deleting records
     public void deleteButtonPushed() throws SQLException {
         ObservableList<LocalDatabase.CatchRecord> selectedRows;
         selectedRows = tableView.getSelectionModel().getSelectedItems();
@@ -215,7 +203,6 @@ public class HomeController  {
         initialize();
     }
 
-    //method for initializing/reset the table
     public void initialize() throws SQLException {
         calculateStock();
         dateTimeColumn.setCellValueFactory(new PropertyValueFactory<LocalDatabase.CatchRecord, String>("dateTime"));

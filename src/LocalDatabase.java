@@ -1,5 +1,6 @@
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -784,8 +785,9 @@ public class LocalDatabase {
                  String line = String.format("%s, %f, %f, %f" , datetime, weight, longitude, latitude);
                  fileWriter.write(line);
                  fileWriter.newLine();
-             }
 
+
+             }
          for (SellRecord record: sellRecords){
                 String datetime = record.date.toString();
                 double weight = record.getWeight();

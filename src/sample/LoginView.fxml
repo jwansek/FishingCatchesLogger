@@ -47,7 +47,7 @@
             <TextField fx:id="username" layoutX="149.0" layoutY="165.0" prefHeight="25.0" prefWidth="303.0" promptText="Username/email" />
             <Button layoutX="279.0" layoutY="265.0" mnemonicParsing="false" onAction="#Login" text="Login" />
             <PasswordField fx:id="password" layoutX="149.0" layoutY="200.0" prefHeight="25.0" prefWidth="303.0" promptText="Password" />
-            <Label layoutX="244.0" layoutY="86.0" text="Pesca local">
+            <Label layoutX="213.0" layoutY="82.0" text="Fish data system">
                <font>
                   <Font size="24.0" />
                </font>

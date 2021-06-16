@@ -6,11 +6,10 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    //load the login page on start up
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("LoginView.fxml"));
-        primaryStage.setTitle("PescaLocal");
+        primaryStage.setTitle("Phishing4u");
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
     }

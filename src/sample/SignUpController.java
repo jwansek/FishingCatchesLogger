@@ -3,24 +3,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import java.sql.SQLException;
+import java.awt.*;
 
 public class SignUpController {
-    //if a string matches this it is a valid email
-    private static final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 
-    //load in the fxml elements
+    private static final String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
     @FXML TextField username;
     @FXML TextField email;
     @FXML TextField password;
     @FXML TextField confirmPassword;
     @FXML Label errorMessage;
 
-    //method to go to the login page
     public void GoToLogin(ActionEvent e){
         WindowSwitcher.goToPage(e, "LoginView", 600, 400);
     }
 
-    //method to sign up a new user using the details entered, and then login the user
     public void SignUp(ActionEvent e) throws SQLException, LocalDatabase.UserNotFoundException, LocalDatabase.IncorrectPasswordException {
         String usernameText = username.getText().trim();
         String emailText = email.getText().trim();

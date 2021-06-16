@@ -6,6 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.DoubleStringConverter;
+
+import javax.swing.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +19,6 @@ public class HomeSellController  {
 
     private static LocalDatabase db;
 
-    //load in the fxml elements
     @FXML Label stockTotal;
     @FXML Label errorMessage;
     @FXML ComboBox choiceBox;
@@ -28,37 +29,37 @@ public class HomeSellController  {
     @FXML private TableColumn<LocalDatabase.SellRecord, Double> weightColumn;
     @FXML private TableColumn<LocalDatabase.SellRecord, Double> priceColumn;
 
-    //creates a new string to double converter
+
     private static final DoubleStringConverter converter = new DoubleStringConverter();
-    //method to receive a database object
+
     public static void receiveDB(LocalDatabase database){
         db = database;
     }
-    //method to go back to the login page
+
     public void Logout(ActionEvent e){
         WindowSwitcher.goToPage(e, "LoginView", 600, 400);
     }
-    //method to switch to the catch data page
+
     public void switchDataTables(ActionEvent e){
         HomeController.receiveDB(db);
         WindowSwitcher.goToPage(e, "HomeView", 600, 400);
     }
-    //method to go to the import export page
+
     public void goToImportExport(ActionEvent e){
         ImportExportController.receiveDB(db);
         WindowSwitcher.goToPage(e, "ImportExportView", 600, 400);
     }
-    //method to go to the input page
+
     public void goToInput(ActionEvent e){
         InputController.receiveDB(db);
         WindowSwitcher.goToPage(e, "InputView", 600, 400);
     }
-    //method that clears the current search
+
     public void clear() throws SQLException {
         searchField.clear();
         initialize();
     }
-    //method that allows the user to search by a data category and only show in the table the records that match to that search
+
     public void search() {
         try {
             switch (choiceBox.getValue().toString()) {
@@ -121,7 +122,7 @@ public class HomeSellController  {
             errorMessage.setText("Please select a search category");
         }
     }
-    //method that calculates the current weight of fish in stock of the user
+
         public void calculateStock() throws SQLException {
         ArrayList<LocalDatabase.CatchRecord> catchRecordArrayList = db.getAllCatchRecords();
         Iterator<LocalDatabase.CatchRecord> i = catchRecordArrayList.iterator();
@@ -136,7 +137,7 @@ public class HomeSellController  {
         }
         stockTotal.setText((catchTotal-sellTotal) + "kg");
     }
-    //method for editing date time of a record
+
     public void changeDateTimeCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         LocalDatabase.SellRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
         //check if the new value in eddited cell is in correct local date time format
@@ -150,7 +151,6 @@ public class HomeSellController  {
             initialize();
         }
     }
-    //method for editing weight of a record
     public void changeWeightCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         try{
             LocalDatabase.SellRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
@@ -162,7 +162,6 @@ public class HomeSellController  {
             errorMessage.setText("that's not a number");
         }
     }
-    //method for editing the latitude of a record
     public void changePriceCellEvent(TableColumn.CellEditEvent edditedCell) throws SQLException {
         try{
             LocalDatabase.SellRecord recordSelected = tableView.getSelectionModel().getSelectedItem();
@@ -175,7 +174,7 @@ public class HomeSellController  {
         }
     }
 
-    //method for deleting records
+
     public void deleteButtonPushed() throws SQLException {
         ObservableList<LocalDatabase.SellRecord> selectedRows;
         selectedRows = tableView.getSelectionModel().getSelectedItems();
@@ -186,7 +185,7 @@ public class HomeSellController  {
 
         initialize();
     }
-    //method for initializing/reset the table
+
     public void initialize() throws SQLException {
         calculateStock();
         dateTimeColumn.setCellValueFactory(new PropertyValueFactory<LocalDatabase.SellRecord, String>("dateTime"));
