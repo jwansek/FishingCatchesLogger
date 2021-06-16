@@ -5,17 +5,14 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.time.format.DateTimeParseException;
 
 public class ImportExportController {
 
+    //load in the fxml elements
     @FXML Label fileLabel;
     @FXML Label folderLabel;
     @FXML Label errorMessage;
@@ -23,16 +20,18 @@ public class ImportExportController {
     private String selectedFile1;
     private String selectedDirectory1;
     private static LocalDatabase db;
-
+    //method to receive a database object
     public static void receiveDB(LocalDatabase database){
         db = database;
     }
 
+    //method to go back to homepage
     public void goToHome(ActionEvent event){
         HomeController.receiveDB(db);
         WindowSwitcher.goToPage(event, "HomeView", 600, 400);
     }
 
+    //method for opening the file chooser and choosing a file
     public void openFileChooser(ActionEvent e){
         try{
             FileChooser fileChooser = new FileChooser();
@@ -43,6 +42,7 @@ public class ImportExportController {
         }catch(NullPointerException ignored){}
     }
 
+    //method for opening the folder choosing and choosing a folder
     public void openFolderChooser(ActionEvent e){
         try{
             DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -52,6 +52,7 @@ public class ImportExportController {
         }catch(NullPointerException ignored){}
     }
 
+    //method for importing data from a text file
     public void importData(ActionEvent e){
         try{
             db.importData(selectedFile1);
@@ -62,6 +63,7 @@ public class ImportExportController {
             errorMessage.setText("Error, cannot find file or wrong type of data");
         }
     }
+    //method for exporting data to a text file
     public void exportData(ActionEvent e){
         try{
             db.exportData(selectedDirectory1);
