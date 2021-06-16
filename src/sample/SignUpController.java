@@ -28,7 +28,7 @@ public class SignUpController {
             errorMessage.setText("Please enter a username.");
             return;
         }
-        else if (!emailText.matches(EMAIL_REGEX)) {
+        else if (!emailText.equals("") && !emailText.matches(EMAIL_REGEX)) {
             errorMessage.setText("The given email isn't valid.");
             return;
         }
@@ -55,6 +55,7 @@ public class SignUpController {
         } catch (LocalDatabase.UserNotFoundException exception) {
             db.addUser(usernameText, emailText, passwordText);
             db.changeUser(usernameText, passwordText);
+            HomeController.receiveDB(db);
             WindowSwitcher.goToPage(e, "HomeView", 600, 400);
         }
     }
