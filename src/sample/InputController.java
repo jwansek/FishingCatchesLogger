@@ -3,18 +3,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class InputController {
-
+    //if a string matches these regex they are either a numeric (including decimal) or a no decimal numeric
     private static final String numeric_regex = "-?\\d+(\\.\\d+)?";
     private static final String noDecimal_numeric_regex = "^\\d+$";
     private static LocalDatabase db;
 
-
+    //load in the fxml elements
     @FXML DatePicker date;
     @FXML TextField weight;
     @FXML TextField longitude;
@@ -29,11 +28,12 @@ public class InputController {
     @FXML Label errorMessage1;
     @FXML TextField hour1;
     @FXML TextField minute1;
-
+    //method to receive a database object
     public static void receiveDB(LocalDatabase database){
         db = database;
     }
 
+    //method for inputting a new catch data record
     public void inputCatch(ActionEvent e) throws SQLException {
 
         if(date.getValue() == null){
@@ -102,6 +102,7 @@ public class InputController {
         WindowSwitcher.goToPage(e, "HomeView", 600, 400);
     }
 
+    //method for inputting sell records
     public void inputSell(ActionEvent e) throws SQLException {
 
         if(date1.getValue() == null){
@@ -162,6 +163,7 @@ public class InputController {
         WindowSwitcher.goToPage(e, "HomeView", 600, 400);
     }
 
+    //method to go back to the homepage
     public void goToHome(ActionEvent event){
         HomeController.receiveDB(db);
         WindowSwitcher.goToPage(event, "HomeView", 600, 400);
